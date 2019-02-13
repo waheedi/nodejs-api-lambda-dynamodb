@@ -20,11 +20,11 @@ exports.create = function(params){
   return new Promise(function(resolve, reject) {
     docClient.put(params, function(err, data) {
       if (err) {
-        console.error(params.TableName + ": Unable to add new item. Error JSON:", JSON.stringify(err, null, 2));
+        console.error(`${params.TableName}: Unable to add new item. Error JSON:`, JSON.stringify(err, null, 2));
       } 
       else {
-        console.log(params.TableName + ": Added item ", JSON.stringify(data, null, 2));
-        resolve(data.items[0]);
+        console.log(`${params.TableName}: item Created`);
+        resolve(params.Item);
       }
     });
   });
@@ -34,11 +34,11 @@ exports.update = function(params){
   return new Promise(function(resolve, reject) {
     docClient.update(params, function(err, data) {
       if (err) {
-        console.error(params.TableName +": Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+        console.error(`${params.TableName}: Unable to update item. Error JSON:`, JSON.stringify(err, null, 2));
       } 
       else {
-        console.log(params.TableName + ": UpdateItem succeeded ", JSON.stringify(data, null, 2));
-        resolve(data.items[0]);
+        console.log(`${params.TableName}: UpdateItem succeeded `, JSON.stringify(data, null, 2));
+        resolve(data.Attributes);
       }
     });
   });
@@ -55,10 +55,10 @@ exports.query = function(params){
   return new Promise(function(resolve, reject) {
     docClient.query(params, function(err, data) {
       if (err) {
-        console.error(params.TableName +": Error while querying ", JSON.stringify(err, null, 2));
+        console.error(`${params.TableName}: Error while querying `, JSON.stringify(err, null, 2));
       } 
       else {
-        console.log(params.TableName +":Success", JSON.stringify(data, null, 2));
+        console.log(`${params.TableName}: Success`, JSON.stringify(data, null, 2));
         resolve(data.Items);
       }
     });
@@ -68,20 +68,47 @@ exports.query = function(params){
 //Helper functions
 
 //Generate ID based on the last item (ID + 1) for a specific table
+
 exports.genId = function(table){
-  var idParams = {
-    TableName:table,
-    ProjectionExpression: "id",
-    Limit: 1
-  };
-  docClient.query(idParams, function(err, data) {
-    if (err) {
-      console.log(table +": Error querying ", JSON.stringify(err, null, 2));
-    } 
-    else {
-      console.log(table + ": Success", data.Items);
-      return data.Items;
-    }
+  return new Promise(function(resolve, reject) {
+    var paramsIncrement = {
+      TableName:"ids",
+      Key:{
+          "table_name": table
+      },
+      UpdateExpression: "set id = if_not_exists(id, :zero) + :val ",
+      ExpressionAttributeValues:{
+          ":val": 1,
+          ":zero": 0
+      },
+      ReturnValues:"UPDATED_NEW"
+    };
+    var idParams = {
+      TableName:"ids",
+      ProjectionExpression: "id",
+      ExpressionAttributeValues: {
+        ":table_name": table
+      },
+      KeyConditionExpression: "table_name = :table_name",
+      Limit: 1
+    };
+    docClient.query(idParams, function(err, data) {
+      if (err) {
+        console.log(`${table}: Error querying `, JSON.stringify(err, null, 2));
+      } 
+      else {
+        console.log(`${table}: Success`, data);
+        docClient.update(paramsIncrement, function(err, data) {
+          if (err) {
+            console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+          } 
+          else {
+            console.log("New ID succeeded:", JSON.stringify(data.Attributes.id, null, 2));
+            resolve(data.Attributes.id);
+          }
+        });
+      }
+    });
   });
 }
 

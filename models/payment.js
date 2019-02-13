@@ -47,8 +47,8 @@ exports.update = function(params){
       ExpressionAttributeNames: attrs[2],
       ReturnValues:"ALL_NEW"
     };
-    db.update(updateParams).then(function(items){
-      resolve(items);
+    db.update(updateParams).then(function(item){
+      resolve(item);
     });
   });
 }
@@ -66,7 +66,7 @@ exports.findOne = function(params){
       FilterExpression: 'isDeleted = :false'
     };
     db.query(findParams).then(function(items){
-      resolve(items);
+      resolve(items[0]);
     });
   });
 }

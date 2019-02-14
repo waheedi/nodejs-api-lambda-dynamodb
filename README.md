@@ -17,7 +17,8 @@ Asynchronous server-less REST API using vanilla nodejs, dynamodb for storage and
 - create a lambda function on aws, and upload the zipped repo, use the function name "paymentsApi" or update routes.js to reflect for the new name 
 - create two dynamodb tables named "payments" with primary "id" field, and a table named "ids" with primary "table_name" field
 - create the API gateway for aws based on the diagram above
-- configure IAM to make sure to have the right permissions for the lambda function to access CloudWatch, DynamoDB, API Gateway
+- configure IAM to make sure to have the right permissions/policies for the lambda function to access CloudWatch, DynamoDB, API Gateway
+- configure models/db.js with the new DynamoDB region settings
 
 #### Usage
 - to create a new payment item:

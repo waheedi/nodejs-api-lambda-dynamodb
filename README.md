@@ -1,5 +1,5 @@
 # nodejs-api-lambda-dynamodb
-Asynchronous server-less REST API using vanilla nodejs, dynamodb for storage and aws lambda.
+A server-less REST API using vanilla nodejs, dynamodb for storage and aws lambda.
 
 #### Flow Diagram
 ![alt text](payments-rest-api.png)

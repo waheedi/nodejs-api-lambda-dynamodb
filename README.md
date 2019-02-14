@@ -53,3 +53,7 @@ curl -X DELETE \
 
 - also all these curls are available as a postman collection here `paymentsApi.postman_collection.json`
 
+#### TODO
+- create tests for payments api and db.js module
+- auto deploy on aws lambda using ansible
+

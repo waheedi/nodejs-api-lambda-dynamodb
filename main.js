@@ -2,7 +2,7 @@
 
 const routes = require('./routes.js');
 
-exports.handler = async function(event, context,callback){
+exports.handler = async function(event, context){
   //routing event to its right direction (controller) 
   //using a promise so we return results before leaving the request
   return routes.route(event)

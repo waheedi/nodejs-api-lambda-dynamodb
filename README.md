@@ -56,4 +56,5 @@ curl -X DELETE \
 #### TODO
 - create tests for payments api and db.js module
 - auto deploy on aws lambda using ansible
+- update status code responses to fit with rest api standards (e.g 201 for created resources)
 
